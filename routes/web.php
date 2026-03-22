@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
     Route::put('/chat/{message}', [ChatController::class, 'update'])->name('chat.update');
+    Route::delete('/chat/{message}', [ChatController::class, 'destroy'])->name('chat.destroy');
 });
 
 

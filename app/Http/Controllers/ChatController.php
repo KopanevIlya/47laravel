@@ -13,7 +13,6 @@ class ChatController extends Controller
     public function index()
     {
         $messages = Message::with('user')->orderBy('id')->get();
-
         return Inertia::render('Chat/Index' ,[
             'messages'=> $messages
         ]);
@@ -50,6 +49,12 @@ class ChatController extends Controller
 
         return redirect()->route('chat.index');
 
+    }
+
+
+    public function destroy(Message $message){
+        $message->delete();
+        return redirect()->route('chat.index');
     }
 
 }

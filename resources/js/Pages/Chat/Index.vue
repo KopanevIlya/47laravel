@@ -22,6 +22,7 @@
                     </div>
                     <div v-if="msg.user.id === $page.props.auth.user.id">
                         <button @click="startEdit(msg)" class="text-blue-500 text-xs hover:underline">Редактировать</button>
+                        <button @click="deleteMessage(msg.id)" class="text-red-500 text-xs hover:underline">Удалить</button>
                     </div>
                 </div>
                 <div v-if="editingId === msg.id">
@@ -70,6 +71,12 @@ function startEdit(msg) {
 function cancelEdit() {
     editingId.value = null
     editForm.content = ''
+}
+
+function deleteMessage(id){
+    editForm.delete(route('chat.destroy',id),{
+        preserveScroll: true,
+    })
 }
  
 function submitEdit(id) {
