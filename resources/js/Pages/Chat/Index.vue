@@ -52,9 +52,19 @@
  
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: import.meta.env.VITE_PUSHER_APP_KEY,
+  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+  forceTLS: true,
+});
  
 const props = defineProps({ messages: Array })
  
@@ -88,4 +98,29 @@ function submitEdit(id) {
         }
     })
 }
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (messagesEnd.value) {
+      messagesEnd.value.scrollTop = messagesEnd.value.scrollHeight;
+    }
+  });
+}
+
+let echoChannel = null;
+
+onMounted(() => {
+  echoChannel = window.Echo.private('chat.' + props.chat.id)
+    .listen('MessageSent', (e) => {
+      messages.value.push(e.message);
+      scrollToBottom();
+    });
+  scrollToBottom();
+});
+
+onUnmounted(() => {
+  if (echoChannel) {
+    window.Echo.leave('chat.' + props.chat.id);
+  }
+});
 </script>

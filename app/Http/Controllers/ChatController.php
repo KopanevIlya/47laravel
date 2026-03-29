@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Events\MessageSent;
 
 
 
@@ -29,6 +30,8 @@ class ChatController extends Controller
                 'user_id'=>auth()->id(),
                 'content'=>$request->content,
             ]);
+
+            broadcast(new MessageSent($message))->toOthers();
 
             return redirect()->route('chat.index');
 
